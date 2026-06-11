@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="부경대 주변 카페 최저가 비교" />
+    <title>부경 카페랭크</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="hero">
+        <div class="hero-copy">
+          <p class="eyebrow">Pukyong Cafe Rank</p>
+          <h1>부경 카페랭크</h1>
+          <p class="subtitle">부경대 주변 카페 최저가 비교</p>
+          <div class="hero-chips" aria-label="앱 특징">
+            <span>최저가 랭킹</span>
+            <span>카페 6곳 비교</span>
+            <span>가격 제보 가능</span>
+          </div>
+        </div>
+        <div class="hero-side">
+          <div class="hero-art" aria-hidden="true">
+            <div class="hero-art-photo"></div>
+            <div class="hero-art-cup"></div>
+            <div class="hero-art-treat"></div>
+            <div class="mini-cup mini-cup-a"></div>
+            <div class="mini-cup mini-cup-b"></div>
+            <span class="coffee-bean bean-a"></span>
+            <span class="coffee-bean bean-b"></span>
+            <span class="coffee-bean bean-c"></span>
+            <span class="coffee-bean bean-d"></span>
+            <span class="sparkle sparkle-a">✦</span>
+            <span class="sparkle sparkle-b">✦</span>
+          </div>
+          <button id="adminToggle" class="button ghost" type="button">관리자</button>
+        </div>
+      </header>
+
+      <p id="statusMessage" class="status" hidden></p>
+
+      <main id="userView" class="main-grid">
+        <section class="panel picker-panel">
+          <span class="panel-sticker sticker-treats" aria-hidden="true"></span>
+          <div class="section-heading">
+            <h2><span class="section-icon">☕</span> 음료 선택</h2>
+            <p>검색하거나 카테고리에서 메뉴를 골라보세요.</p>
+          </div>
+
+          <label class="search-box">
+            <span>검색</span>
+            <input id="searchInput" type="search" placeholder="예: 라떼, 아메리카노, 아이스티" />
+          </label>
+
+          <div id="categoryTabs" class="category-tabs" aria-label="음료 카테고리"></div>
+          <div id="drinkList" class="drink-list"></div>
+        </section>
+
+        <section class="results-column">
+          <section class="panel">
+            <span class="panel-sticker sticker-cup-small" aria-hidden="true"></span>
+            <div class="section-heading">
+              <h2><span class="section-icon">🏆</span> <span id="rankingTitle">최저가 랭킹</span></h2>
+              <p id="rankingHelp">먹고 싶은 음료를 선택해주세요.</p>
+            </div>
+            <div id="rankingList" class="ranking-list"></div>
+          </section>
+
+          <section id="detailPanel" class="panel detail-panel" hidden></section>
+        </section>
+      </main>
+
+      <main id="adminView" class="panel admin-panel" hidden>
+        <div class="section-heading row">
+          <div>
+            <h2>관리자 화면</h2>
+            <p>Firebase 설정 후 로그인하면 카페와 메뉴를 수정할 수 있습니다.</p>
+          </div>
+          <button id="backToRank" class="button ghost" type="button">랭킹으로</button>
+        </div>
+
+        <form id="loginForm" class="admin-login">
+          <label>
+            <span>이메일</span>
+            <input id="adminEmail" type="email" autocomplete="email" />
+          </label>
+          <label>
+            <span>비밀번호</span>
+            <input id="adminPassword" type="password" autocomplete="current-password" />
+          </label>
+          <button class="button primary" type="submit">로그인</button>
+        </form>
+
+        <div id="adminTools" class="admin-tools" hidden>
+          <button id="logoutButton" class="button ghost" type="button">로그아웃</button>
+
+          <section class="admin-card">
+            <h3>카페 관리</h3>
+            <select id="adminCafeSelect"></select>
+            <form id="cafeForm" class="admin-form"></form>
+          </section>
+
+          <section class="admin-card">
+            <h3>메뉴 관리</h3>
+            <form id="menuForm" class="admin-form"></form>
+            <div id="adminMenuList" class="admin-list"></div>
+          </section>
+
+          <section class="admin-card">
+            <h3>가격 제보</h3>
+            <div id="reportList" class="report-list"></div>
+          </section>
+        </div>
+      </main>
+    </div>
+
+    <dialog id="reportDialog" class="report-dialog">
+      <form id="reportForm" method="dialog">
+        <div class="section-heading row">
+          <div>
+            <h2>가격 제보</h2>
+            <p>실제 가격과 다르면 알려주세요.</p>
+          </div>
+          <button class="button ghost" value="cancel" type="button" id="closeReport">닫기</button>
+        </div>
+        <label>
+          <span>카페명</span>
+          <input id="reportCafeName" required />
+        </label>
+        <label>
+          <span>음료명</span>
+          <input id="reportDrinkName" required />
+        </label>
+        <div class="form-grid">
+          <label>
+            <span>현재 앱 가격</span>
+            <input id="reportOldPrice" type="number" min="0" required />
+          </label>
+          <label>
+            <span>새로운 가격</span>
+            <input id="reportNewPrice" type="number" min="0" required />
+          </label>
+        </div>
+        <label>
+          <span>제보 내용</span>
+          <textarea id="reportMemo" rows="4" maxlength="400"></textarea>
+        </label>
+        <p id="reportMessage" class="form-message"></p>
+        <button class="button primary" type="submit">제보 제출</button>
+      </form>
+    </dialog>
+
+    <script src="./firebase-config.js"></script>
+    <script type="module" src="./app.js"></script>
+  </body>
+</html>
